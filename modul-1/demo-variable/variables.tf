@@ -14,6 +14,7 @@ variable "rgname" {
 variable "saname" {
   type        = string
   description = "Storage Account Name - must be globally unique"
+  default     = "sa-demo-terraform-vegholm"
 }
 
 variable "company" {

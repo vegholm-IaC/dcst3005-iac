@@ -12,6 +12,10 @@ provider "azurerm" {
   subscription_id = "a3adf20e-4966-4afb-b717-4de1baae6db1"
 }
 
+output "sa_id" {
+  value = azurerm_storage_account.sa.id
+}
+
 resource "azurerm_resource_group" "rgsa" {
   name     = var.rgname
   location = var.location
