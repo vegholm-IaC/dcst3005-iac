@@ -40,5 +40,5 @@ module "vmss" {
   rg_name   = azurerm_resource_group.rg.name
   location  = var.location
   vmss_name = var.vmss_name
-  subnet_id = module.network.subnet_id
+  subnet_id = module.network.subnet_ids["app"]
 }
