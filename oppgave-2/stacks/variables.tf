@@ -22,12 +22,13 @@ variable "managedby" {
   type = string
 }
 
-variable "address_space" {
+variable "rsg_name" {
   type = string
 }
 
-variable "subnets" {
-  type        = map(string)
-  description = "Subnett som skal opprettes: navn => adresseprefiks"
-
+variable "address_space" {
+  type = string
+}
+variable "subnet_ids" {
+  type = map(string)
 }

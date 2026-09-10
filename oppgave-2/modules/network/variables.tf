@@ -20,3 +20,13 @@ variable "owner" {
 variable "managedby" {
   type = string
 }
+
+variable "address_space" {
+  type        = string
+  description = "Adresserommet vnet-et disponerer, som CIDR – for eksempel 10.10.0.0/16"
+}
+
+variable "subnets" {
+  type        = map(string)
+  description = "Subnett som skal opprettes: navn => adresseprefiks"
+}
