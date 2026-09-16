@@ -11,6 +11,7 @@ terraform {
 provider "azurerm" {
   features {}
   subscription_id = var.subscription_id
+  
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -19,15 +20,14 @@ resource "azurerm_resource_group" "rg" {
   tags     = local.common_tags
 }
 
-module "stacks" {
-  source        = "../../stacks"
+module "network" {
+  source        = "../../../modules/network"
   rsg_name      = azurerm_resource_group.rg.name
-  base_name     = lower(var.base_name)
   location      = var.location
-  vm_size       = lower(var.vm_size)
+  base_name     = lower(var.base_name)
   environment   = var.environment
   owner         = var.owner
   managedby     = var.managedby
-  subnet_ids    = var.subnets
   address_space = var.address_space
+  subnets       = var.subnets
 }
