@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: rg
+        working-directory: modul-06/rg
 
     env:
       TF_INPUT: false
