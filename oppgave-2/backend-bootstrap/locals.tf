@@ -1,8 +1,8 @@
 locals {
   tags = {
-    keep = "true"
-    owner       = var.owner
-    managedby   = var.managedby
-    purpose = var.purpose
+    keep      = "true"
+    owner     = var.owner
+    managedby = var.managedby
+    purpose   = var.purpose
   }
 }
