@@ -10,7 +10,7 @@ terraform {
 
 provider "azurerm" {
   features {}
-  resource_providers_to_register = [ "Microsoft.Network" ]
+  resource_providers_to_register = ["Microsoft.Network"]
 
 }
 
@@ -31,5 +31,3 @@ module "network" {
   address_space = var.address_space
   subnets       = var.subnets
 }
-
-#test av pipeline
