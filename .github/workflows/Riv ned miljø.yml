@@ -16,7 +16,14 @@ on:
         description: Hvorfor river du ned?
         type: string
         required: true
+permissions:
+  id-token: write
+  contents: read
 
+concurrency:
+  group: webapp-${{ inputs.environment }}
+  cancel-in-progress: false
+  
 jobs:
   bekreft:
     runs-on: ubuntu-latest
