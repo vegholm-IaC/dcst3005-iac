@@ -1,0 +1,51 @@
+name: Riv ned et miljø
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Miljø som skal rives ned
+        type: choice
+        options: [dev, test, prod]
+        required: true
+      bekreftelse:
+        description: 'Skriv "riv ned <miljø>" for å bekrefte'
+        type: string
+        required: true
+      begrunnelse:
+        description: Hvorfor river du ned?
+        type: string
+        required: true
+
+jobs:
+  bekreft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sjekk bekreftelsen
+        env:
+          BEKREFTELSE: ${{ inputs.bekreftelse }}
+          MILJO: ${{ inputs.environment }}
+        run: |
+          if [ "$BEKREFTELSE" != "riv ned $MILJO" ]; then
+            echo "::error::Ikke bekreftet. Forventet: riv ned $MILJO"
+            exit 1
+          fi
+          echo "Bekreftet."
+
+  riv-ned:
+    needs: bekreft
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Lag en destroy-plan
+        run: terraform plan -destroy -out=tfdestroy
+
+      - name: Utfør destroy-planen
+        run: terraform apply tfdestroy
+
+      - name: Verifiser at det er tomt
+        run: terraform state list
+
+      - name: Slett parameterfila
+        if: always()
+        run: rm -f params.auto.tfvars
