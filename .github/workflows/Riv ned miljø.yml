@@ -69,7 +69,7 @@ jobs:
  
     defaults:
       run:
-        working-directory: stacks/nettverk
+        working-directory: oppgave2/stacks/webapp/nettverk
  
     env:
       MILJO: ${{ inputs.environment }}
@@ -109,7 +109,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="${{ github.workspace }}/shared/backend.hcl" \
-            -backend-config="key=env/$MILJO/nettverk.tfstate"
+            -backend-config="key=env/$MILJO/webapp/nettverk.tfstate"
  
       # plan -destroy -> apply, ikke `terraform destroy -auto-approve`.
       # Samme disiplin som ved utrulling: planen er et eget steg med sin egen
