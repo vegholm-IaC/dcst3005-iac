@@ -46,7 +46,10 @@ jobs:
           echo "TF_VAR_location=$LOC" >> "$GITHUB_ENV"
 
       - name: Init
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="${{ github.workspace }}/terraform-projects/shared/backend.hcl" \
+            -backend-config="key=env/dev/rg.tfstate"
 
       - name: Validate
         run: terraform validate
