@@ -31,6 +31,3 @@ variable "subnets" {
   description = "Subnett som skal opprettes: navn => adresseprefiks"
 }
 
-variable "subscription_id" {
-  type = string
-}
