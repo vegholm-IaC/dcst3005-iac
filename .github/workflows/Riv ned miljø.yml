@@ -37,6 +37,30 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
+      - name: Hent koden
+        uses: actions/checkout@v5
+
+      - name: Installer Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Logg inn i Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Hent parametere fra Key Vault
+        run: |
+          KV="${{ secrets.KEYVAULT_NAME }}"
+          RG=$(az keyvault secret show --vault-name "$KV" --name rg-name  --query value -o tsv)
+          LOC=$(az keyvault secret show --vault-name "$KV" --name location --query value -o tsv)
+          echo "TF_VAR_rg_name=$RG"   >> "$GITHUB_ENV"
+          echo "TF_VAR_location=$LOC" >> "$GITHUB_ENV"
+
+      - name: Terraform init
+        run: terraform init
+      
       - name: Lag en destroy-plan
         run: terraform plan -destroy -out=tfdestroy
 
