@@ -1,6 +1,12 @@
 name: Rull ut webapp
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'oppgave-2/stacks/webapp/**'
+      - '.github/workflows/webapp.yml'
+
   workflow_dispatch:
     inputs:
       environment:
