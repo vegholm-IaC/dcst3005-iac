@@ -24,7 +24,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: oppgave-2/stacks/webapp
+        working-directory: oppgave-2/stacks/webapp/nettverk
 
     env:
       ARM_USE_OIDC: true
