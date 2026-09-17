@@ -21,3 +21,8 @@ variable "subscription_id" {
 variable "location" {
   type = string
 }
+
+variable "pipeline_principal_id" {
+  description = "Object-ID til service principal-en workflowen logger inn som"
+  type        = string
+}

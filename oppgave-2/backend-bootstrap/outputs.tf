@@ -6,3 +6,7 @@ output "backend_hcl_template" {
   use_azuread_auth = true
   EOT
 }
+
+output "keyvault_name" {
+  value = azurerm_key_vault.kv.name
+}
