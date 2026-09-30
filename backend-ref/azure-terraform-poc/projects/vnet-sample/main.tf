@@ -1,7 +1,7 @@
 provider "azurerm" {
   features {}
   subscription_id = "" # Sett riktig subscription_id her eller via env var
-  use_cli = true
+  use_cli         = true
 }
 
 resource "azurerm_resource_group" "lab" {
