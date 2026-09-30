@@ -42,3 +42,5 @@ module "vmss" {
   vmss_name = var.vmss_name
   subnet_id = module.network.subnet_ids["app"]
 }
+
+#Test for branches git, "tags"
