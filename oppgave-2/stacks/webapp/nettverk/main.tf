@@ -9,7 +9,7 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+      features {}
   resource_providers_to_register = ["Microsoft.Network"]
 
 }

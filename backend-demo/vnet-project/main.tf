@@ -1,10 +1,10 @@
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg-tfstate-vegholm"  # << endre
-    storage_account_name = "sttfstatevegholm01"  # << endre
+    resource_group_name  = "rg-tfstate-vegholm" # << endre
+    storage_account_name = "sttfstatevegholm01" # << endre
     container_name       = "tfstate"
     key                  = "rg-vnet.tfstate"
-               # navnet på state-fila
+    # navnet på state-fila
   }
 
   required_providers {
