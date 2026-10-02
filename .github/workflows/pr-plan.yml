@@ -63,7 +63,25 @@ jobs:
 
       - name: Plan
         run: terraform plan -lock=false -no-color -out=tfplan
+      
+      - name: Legg planen som kommentar
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "## Terraform plan – dev"
+            echo
+            echo "<details><summary>Vis hele planen</summary>"
+            echo
+            echo '```terraform'
+            terraform show -no-color tfplan
+            echo '```'
+            echo
+            echo "</details>"
+          } > "${{ github.workspace }}/kommentar.md"
 
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --body-file "${{ github.workspace }}/kommentar.md"
       - name: Slett parameterfila
         if: always()
         run: rm -f params.auto.tfvars
