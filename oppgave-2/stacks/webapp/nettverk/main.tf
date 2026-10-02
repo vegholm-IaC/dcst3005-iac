@@ -31,3 +31,4 @@ module "network" {
   address_space = var.address_space
   subnets       = var.subnets
 }
+#Dette er en kommentar
