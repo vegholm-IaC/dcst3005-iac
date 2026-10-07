@@ -31,3 +31,89 @@ jobs:
       - name: Valider koden
         working-directory: oppgave-2/stacks/webapp
         run: terraform validate
+
+  plan-dev:
+    name: plan mot dev
+    # Mennesket skal ikke lese en plan for kode som ikke engang er formatert.
+    needs: kontroller
+    runs-on: ubuntu-latest
+ 
+    # Planen går alltid mot dev. test og prod nevnes ikke i denne fila.
+    environment: dev
+ 
+    # Denne jobben trenger mer enn standarden øverst:
+    permissions:
+      contents: read
+      id-token: write        # logge inn i Azure med OIDC
+      pull-requests: write   # skrive kommentaren på PR-en
+ 
+    defaults:
+      run:
+        working-directory: oppgave-2/stacks/webapp/nettverk
+ 
+    env:
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_INPUT: false
+      TF_IN_AUTOMATION: true
+ 
+    steps:
+      - name: Hent koden
+        uses: actions/checkout@v5
+ 
+      - name: Installer Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false   # ellers blir kommentaren full av støy
+ 
+      - name: Logg inn i Azure
+        uses: Azure/login@v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+ 
+      - name: Hent parameterfila for dev
+        run: |
+          az keyvault secret show \
+            --vault-name "${{ secrets.KEYVAULT_NAME }}" \
+            --name "tfvars-dev" \
+            --query value -o tsv > params.auto.tfvars
+ 
+      - name: Init
+        run: |
+          terraform init \
+            -backend-config="${{ github.workspace }}/oppgave-2/shared/backend.hcl" \
+            -backend-config="key=env/dev/webapp/nettverk.tfstate"
+ 
+      # -lock=false: planen skriver ingenting, så den skal ikke blokkere en
+      # utrulling som går samtidig. -no-color: ellers [0m[1m i kommentaren.
+      - name: Plan
+        run: terraform plan -lock=false -no-color -out=tfplan
+ 
+      - name: Legg planen som kommentar
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "## Terraform plan mot dev"
+            echo
+            terraform show -no-color tfplan | grep -E '^(Plan:|No changes)' || true
+            echo
+            echo "<details><summary>Vis hele planen</summary>"
+            echo
+            echo '```terraform'
+            terraform show -no-color tfplan
+            echo '```'
+            echo
+            echo "</details>"
+          } > "${{ github.workspace }}/kommentar.md"
+ 
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --body-file "${{ github.workspace }}/kommentar.md"
+ 
+      - name: Slett parameterfila
+        if: always()
+        run: rm -f params.auto.tfvars
