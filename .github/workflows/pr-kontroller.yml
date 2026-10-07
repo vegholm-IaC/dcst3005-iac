@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'oppgave-2/**'
-      - '.github/workflows/pr-kontroller.yml'
+      - '.github/**'
 
 permissions:
   contents: read
