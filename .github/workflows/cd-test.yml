@@ -109,3 +109,4 @@ jobs:
             echo
             echo "**Neste steg:** Actions → *CD prod* → *Run workflow* → lim inn den samme SHA-en."
           } >> "$GITHUB_STEP_SUMMARY"
+#juks
