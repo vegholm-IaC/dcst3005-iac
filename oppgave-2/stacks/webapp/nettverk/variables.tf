@@ -22,6 +22,10 @@ variable "managedby" {
   type = string
 }
 
+variable "kurs" {
+  type = string
+}
+
 variable "address_space" {
   type = string
 }
