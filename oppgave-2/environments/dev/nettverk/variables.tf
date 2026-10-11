@@ -1,29 +1,31 @@
 variable "base_name" {
-  type = string
+  type        = string
+  description = "Navneprefiks for nettverksressursene i dev-miljøet."
 }
 
 variable "location" {
-  type = string
-}
-
-variable "vm_size" {
-  type = string
+  type        = string
+  description = "Azure-regionen der nettverksressursene opprettes."
 }
 
 variable "environment" {
-  type = string
+  type        = string
+  description = "Miljønavnet som legges på ressursene som tag."
 }
 
 variable "owner" {
-  type = string
+  type        = string
+  description = "Eier av ressursene, brukt som tag."
 }
 
 variable "managedby" {
-  type = string
+  type        = string
+  description = "Verktøyet eller teamet som administrerer ressursene, brukt som tag."
 }
 
 variable "address_space" {
-  type = string
+  type        = string
+  description = "Adresseprefikset for det virtuelle nettverket."
 }
 
 variable "subnets" {
@@ -32,5 +34,6 @@ variable "subnets" {
 }
 
 variable "subscription_id" {
-  type = string
+  type        = string
+  description = "ID-en til Azure-abonnementet for dev-miljøet."
 }

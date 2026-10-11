@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.0.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -19,14 +21,16 @@ resource "azurerm_resource_group" "rg" {
 }
 
 module "stacks" {
-  source        = "../../stacks"
-  rsg_name      = azurerm_resource_group.rg.name
-  base_name     = lower(var.base_name)
-  location      = var.location
-  vm_size       = lower(var.vm_size)
-  environment   = var.environment
-  owner         = var.owner
-  managedby     = var.managedby
-  subnet_ids    = var.subnets
-  address_space = var.address_space
+  source    = "../../stacks"
+  rsg_name  = azurerm_resource_group.rg.name
+  base_name = lower(var.base_name)
+  location  = var.location
+  # tflint-ignore: azurerm_virtual_machine_invalid_vm_size # Gyldig nyere SKU som mangler i allowlisten til ruleset 0.32.0.
+  vm_size              = var.vm_size
+  environment          = var.environment
+  owner                = var.owner
+  managedby            = var.managedby
+  subnet_ids           = var.subnets
+  address_space        = var.address_space
+  admin_ssh_public_key = var.admin_ssh_public_key
 }

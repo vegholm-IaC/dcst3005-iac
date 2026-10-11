@@ -1,5 +1,6 @@
 output "backend_hcl_template" {
-  value = <<EOT
+  description = "HCL-konfigurasjon for å koble Terraform til backend-containeren."
+  value       = <<EOT
   resource_group_name = "${azurerm_resource_group.rg.name}"
   storage_account_name = "${azurerm_storage_account.sa.name}"
   container_name = "${azurerm_storage_container.sc.name}"
@@ -8,5 +9,6 @@ output "backend_hcl_template" {
 }
 
 output "keyvault_name" {
-  value = azurerm_key_vault.kv.name
+  description = "Navnet på Key Vault-et som brukes til å lagre secrets."
+  value       = azurerm_key_vault.kv.name
 }

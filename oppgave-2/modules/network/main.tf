@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.0.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -36,4 +38,3 @@ resource "azurerm_subnet_network_security_group_association" "snet_nsg" {
   subnet_id                 = each.value.id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
-
