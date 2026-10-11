@@ -14,6 +14,18 @@ resource "azurerm_network_security_group" "nsg" {
   location            = var.location
   resource_group_name = lower(var.rsg_name)
   tags                = local.common_tags
+
+  security_rule {
+    name                       = "ssh-feilsoking"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_virtual_network" "vnet" {
