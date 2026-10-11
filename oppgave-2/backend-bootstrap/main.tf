@@ -1,3 +1,18 @@
+terraform {
+  required_version = ">= 1.0.0"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 5.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.9"
+    }
+  }
+}
+
 provider "azurerm" {
   features {}
   subscription_id     = var.subscription_id
@@ -20,7 +35,13 @@ resource "azurerm_resource_group" "rg" {
   tags     = local.tags
 }
 
+# tflint-ignore: azurerm_resources_missing_prevent_destroy # Backend-lagringskontoen må kunne slettes ved opprydding av studentoppsettet.
 resource "azurerm_storage_account" "sa" {
+  #checkov:skip=CKV_AZURE_59:GitHub Actions-runneren må kunne nå state over internett i studentoppsettet.
+  #checkov:skip=CKV_AZURE_33:Storage-kontoen brukes ikke til køer.
+  #checkov:skip=CKV_AZURE_206:LRS er valgt for å unngå kostnaden ved geo-replikering; state har versjonering og soft delete.
+  #checkov:skip=CKV2_AZURE_33:Privat endepunkt krever et privat nettverk som GitHub Actions-runneren ikke er koblet til.
+  #checkov:skip=CKV2_AZURE_1:Microsoft-administrerte nøkler er tilstrekkelig for dette studentoppsettet.
   name                = lower(format("sttf%s%s", var.base_name, random_string.suffix.result))
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -28,6 +49,7 @@ resource "azurerm_storage_account" "sa" {
   account_tier             = "Standard"
   account_kind             = "StorageV2"
   account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
 
   shared_access_key_enabled       = false
   default_to_oauth_authentication = true
@@ -45,7 +67,9 @@ resource "azurerm_storage_account" "sa" {
 
 }
 
+# tflint-ignore: azurerm_resources_missing_prevent_destroy # Backend-containeren må kunne slettes ved opprydding av studentoppsettet.
 resource "azurerm_storage_container" "sc" {
+  #checkov:skip=CKV2_AZURE_21:Leselogging for state-containeren gir ekstra lagrings- og oppsettskostnad utenfor studentoppsettet.
   name                  = format("tfstate-%s", var.base_name)
   storage_account_id    = azurerm_storage_account.sa.id
   container_access_type = "private"
@@ -63,8 +87,13 @@ resource "azurerm_role_assignment" "blob_contrib_self_account_scope" {
     azurerm_storage_container.sc
   ]
 }
-
+# tflint-ignore: azurerm_resources_missing_prevent_destroy # Key Vault-et har soft delete og kan gjenopprettes
 resource "azurerm_key_vault" "kv" {
+  #checkov:skip=CKV_AZURE_189:GitHub Actions-runneren må kunne hente parameterfila over internett i studentoppsettet.
+  #checkov:skip=CKV_AZURE_109:Brannmurregler ville sperret GitHub Actions-runneren ute fra parameterfila.
+  #checkov:skip=CKV2_AZURE_32:Privat endepunkt krever et privat nettverk som GitHub Actions-runneren ikke er koblet til.
+  #checkov:skip=CKV_AZURE_110:Purge protection hindrer opprydding i et studentoppsett
+  #checkov:skip=CKV_AZURE_42:Krever purge protection, se CKV_AZURE_110
   name                = substr(lower("kv-tf-${var.base_name}${random_string.suffix.result}"), 0, 24)
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name

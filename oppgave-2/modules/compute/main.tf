@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.0.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -21,6 +23,8 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_virtual_machine" "vm" {
+  #checkov:skip=CKV2_AZURE_10:Azure Antimalware-utvidelsen gjelder Windows, mens denne modulen oppretter Ubuntu Linux-VM-er.
+  #checkov:skip=CKV2_AZURE_12:Azure Backup krever et ekstra vault og løpende kostnader som er utenfor dette studentoppsettet.
   name                  = lower("VM-${var.base_name}")
   location              = var.location
   resource_group_name   = lower(var.rsg_name)
@@ -48,10 +52,14 @@ resource "azurerm_virtual_machine" "vm" {
   os_profile {
     computer_name  = "hostname"
     admin_username = "testadmin"
-    admin_password = "Password1234!"
   }
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+
+    ssh_keys {
+      path     = "/home/testadmin/.ssh/authorized_keys"
+      key_data = var.admin_ssh_public_key
+    }
   }
   tags                          = local.common_tags
   delete_os_disk_on_termination = true

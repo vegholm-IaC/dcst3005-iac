@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.0.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -31,13 +33,15 @@ data "terraform_remote_state" "network" {
 }
 
 module "compute" {
-  source      = "../../../modules/compute"
-  rsg_name    = azurerm_resource_group.rg.name
-  base_name   = lower(var.base_name)
-  location    = var.location
-  vm_size     = lower(var.vm_size)
-  subnet_id   = local.subnet_id
-  environment = var.environment
-  owner       = var.owner
-  managedby   = var.managedby
+  source    = "../../../modules/compute"
+  rsg_name  = azurerm_resource_group.rg.name
+  base_name = lower(var.base_name)
+  location  = var.location
+  # tflint-ignore: azurerm_virtual_machine_invalid_vm_size # Gyldig nyere SKU som mangler i allowlisten til ruleset 0.32.0.
+  vm_size              = var.vm_size
+  subnet_id            = local.subnet_id
+  environment          = var.environment
+  owner                = var.owner
+  managedby            = var.managedby
+  admin_ssh_public_key = var.admin_ssh_public_key
 }

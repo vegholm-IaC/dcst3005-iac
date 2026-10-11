@@ -1,24 +1,30 @@
 variable "location" {
-  type = string
+  type        = string
+  description = "Azure-regionen der nettverksressursene opprettes."
 }
 variable "base_name" {
-  type = string
+  type        = string
+  description = "Navneprefiks for nettverksressursene."
 }
 
 variable "rsg_name" {
-  type = string
+  type        = string
+  description = "Navnet på ressursgruppen for nettverksressursene."
 }
 
 variable "environment" {
-  type = string
+  type        = string
+  description = "Miljønavnet som legges på ressursene som tag."
 }
 
 variable "owner" {
-  type = string
+  type        = string
+  description = "Eier av ressursene, brukt som tag."
 }
 
 variable "managedby" {
-  type = string
+  type        = string
+  description = "Verktøyet eller teamet som administrerer ressursene, brukt som tag."
 }
 
 variable "address_space" {
