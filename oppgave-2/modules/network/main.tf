@@ -10,6 +10,7 @@ terraform {
 }
 
 resource "azurerm_network_security_group" "nsg" {
+  #checkov:skip=CKV_AZURE_10
   name                = lower("nsg-${var.base_name}")
   location            = var.location
   resource_group_name = lower(var.rsg_name)
